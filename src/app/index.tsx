@@ -106,7 +106,7 @@ export default function Onboarding() {
               />
             </View>
 
-            <Text className="text-md md:text-lg  text-center  font-light m-4  text-gray-900 ">
+            <Text className="text-md md:text-lg  text-center  font-light m-4  text-gray-900  max-w-[800px]">
               {item.description.trim()}
             </Text>
           </View>
