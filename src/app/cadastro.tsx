@@ -4,7 +4,7 @@ import { SignupForm } from "../components/signupForm";
 
 export default function Page() {
   return (
-    <SafeAreaView className="flex-1 m-8">
+    <SafeAreaView className="flex-1 m-8 ">
       <StatusBar
         barStyle="light-content"
         backgroundColor="transparent"

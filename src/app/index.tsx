@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Dimensions,
   Image,
@@ -9,6 +9,7 @@ import {
   View,
 } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
+import { getCadastro } from "../utils/userAsyncStorage";
 
 const { width, height } = Dimensions.get("window");
 const imageSize = Math.min(width * 0.6, 400);
@@ -84,6 +85,20 @@ export default function Onboarding() {
   const handleDone = useCallback(() => {
     router.replace("/cadastro");
   }, [router]);
+
+  
+  useEffect(()=>{
+   const isUser = async () =>{
+    const user = await getCadastro()
+    if(!user){
+      router.replace("/cadastro")
+      return
+    }
+    router.replace("/(tabs)/home")
+   }
+
+   isUser()
+  },[])
 
   return (
     <SafeAreaView className="flex-1  items-center justify-center  bg-white px-4 ">
