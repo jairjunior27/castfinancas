@@ -5,6 +5,7 @@ import { UserContext } from "../context/userContext";
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<UserType | null>(null);
+  const [isModal, setIsModal] = useState<boolean>(false);
 
   useEffect(() => {
     const getAll = async () => {
@@ -15,7 +16,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   return (
-    <UserContext.Provider value={{ user, setUser }}>
+    <UserContext.Provider value={{ user, setUser, isModal, setIsModal }}>
       {children}
     </UserContext.Provider>
   );
