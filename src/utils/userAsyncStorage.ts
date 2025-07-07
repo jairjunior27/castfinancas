@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { UserTYpe } from "../types/user";
+import { UserType } from "../types/user";
 
-export const CadastroUserAsync = async (value: UserTYpe) => {
+export const CadastroUserAsync = async (value: UserType) => {
   try {
     const user = JSON.stringify(value);
     await AsyncStorage.setItem("cadastro", user);

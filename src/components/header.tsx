@@ -13,7 +13,7 @@ export const Header = () => {
   return (
     <View
       style={headerScreen ? { height: h } : {}}
-      className="bg-slate-800  px-4  rounded-b-3xl flex items-center justify-center 
+      className=" bg-slate-700  px-4  rounded-b-3xl flex items-center justify-center 
          flex-col md:rounded  md:flex-row md:justify-between"
     >
       <Logo />

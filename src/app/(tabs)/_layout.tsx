@@ -22,6 +22,15 @@ export default function Layout() {
             ),
           }}
         ></Tabs.Screen>
+        <Tabs.Screen
+          name="moeda"
+          options={{
+            title: "Moeda",
+            tabBarIcon: ({ color }: any) => (
+              <Ionicons name="cash" size={20} color={color} />
+            ),
+          }}
+        ></Tabs.Screen>
       </Tabs>
     </UserProvider>
   );

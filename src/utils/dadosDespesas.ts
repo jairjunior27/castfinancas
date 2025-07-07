@@ -1,0 +1,80 @@
+export const DadosDespesas = [
+  {
+    id: 1,
+    label: "Alimentação",
+    icon: "coffee",
+    cor: "#F28D35",
+  },
+  {
+    id: 2,
+    label: "Moradia",
+    icon: "home",
+    cor: "#4F7D7A",
+  },
+  {
+    id: 3,
+    label: "Transporte",
+    icon: "truck",
+    cor: "#9B59B6",
+  },
+  {
+    id: 4,
+    label: "Educação",
+    icon: "book-open",
+    cor: "#2C3E50",
+  },
+  {
+    id: 5,
+    label: "Saúde",
+    icon: "activity",
+    cor: "#E74C3C",
+  },
+  {
+    id: 6,
+    label: "Lazer",
+    icon: "smile",
+    cor: "#F39C12",
+  },
+  {
+    id: 7,
+    label: "Compras",
+    icon: "shopping-cart",
+    cor: "#D35400",
+  },
+  {
+    id: 8,
+    label: "Assinaturas",
+    icon: "credit-card",
+    cor: "#16A085",
+  },
+  {
+    id: 9,
+    label: "Contas",
+    icon: "wifi",
+    cor: "#2980B9",
+  },
+  {
+    id: 10,
+    label: "Impostos",
+    icon: "file-text",
+    cor: "#34495E",
+  },
+  {
+    id: 11,
+    label: "Viagem",
+    icon: "map",
+    cor: "#1ABC9C",
+  },
+  {
+    id: 12,
+    label: "Doações",
+    icon: "heart",
+    cor: "#E74C3C",
+  },
+  {
+    id: 13,
+    label: "Outros",
+    icon: "more-horizontal",
+    cor: "#7F8C8D",
+  },
+];

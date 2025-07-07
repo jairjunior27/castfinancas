@@ -17,7 +17,12 @@ export const ButtonItem = ({ label, clickButton, isSelected }: prop) => {
           : { backgroundColor: "#fff" }
       }
     >
-      <Text className="text-center font-medium">{label}</Text>
+      <Text
+        className="text-center font-medium"
+        style={isSelected ? { color: "#fff" } : { color: "#111" }}
+      >
+        {label}
+      </Text>
     </TouchableOpacity>
   );
 };
