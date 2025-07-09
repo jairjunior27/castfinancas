@@ -77,7 +77,7 @@ export default function Page() {
   };
 
   return (
-    <View className="w-full max-w-4xl mx-auto px-4 mt-10">
+    <View className="w-full max-w-4xl mx-auto px-4 mt-12 ">
       <Logo />
       <Text className="text-xl sm:text-2xl text-center my-6  font-semibold">
         Conversor de Moeda
@@ -125,7 +125,7 @@ export default function Page() {
       />
 
       <TouchableOpacity
-        className="bg-indigo-500 p-4 rounded-md items-center"
+        className="bg-slate-700 p-4 rounded-md items-center"
         onPress={buscarCotacao}
       >
         <Text className="text-white font-bold">Converter</Text>

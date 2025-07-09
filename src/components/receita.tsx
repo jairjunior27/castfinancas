@@ -1,5 +1,5 @@
 import DateTimePicker from "@react-native-community/datetimepicker";
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Button,
   Platform,
@@ -10,18 +10,25 @@ import {
   View,
 } from "react-native";
 
+import { TransacaoContext } from "../globalContext-Provider/context/transacaoContext";
 import { DadosReceitas } from "../utils/dadosReceita";
 import { formatarMoeda } from "../utils/formatarMoeda";
 import { SelectedIcon } from "./selectedIcon";
+import { UserContext } from "../globalContext-Provider/context/userContext";
 
 export const Receita = () => {
   const [selected, setSelected] = useState<number | null>(null);
   const [title, setTitle] = useState("");
   const [valor, setValor] = useState("");
+  const [msg, setMsg] = useState("");
   const [data, setData] = useState(new Date());
   const [mostrar, setMostrar] = useState(false);
+  const [disable, setDisable] = useState(false);
 
   const receitas = DadosReceitas;
+  const tipo: "Entrada" | "Saida" = "Entrada";
+  const transacao = useContext(TransacaoContext);
+  const open = useContext(UserContext);
 
   const handleDate = (_: any, selectedDate?: Date) => {
     setMostrar(Platform.OS === "ios");
@@ -33,6 +40,46 @@ export const Receita = () => {
     const novaData = new Date(Number(ano), Number(mes) - 1, Number(dia));
     setData(novaData);
   };
+
+  const handleReceita = async () => {
+    if (!title || !valor || selected === null)
+      return setMsg("Favor preencher todos os campos !");
+
+    const novaTransacao = {
+      id: new Date().getTime(),
+      title,
+      valor: parseFloat(
+        valor
+          .replace(/\./g, "")
+          .replace(",", ".")
+          .replace(/[^\d.-]/g, "")
+      ),
+      data: data.toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" }),
+      icon: DadosReceitas.find((item) => item.id === selected)?.icon || "",
+      tipo,
+    };
+
+    try {
+      await transacao?.adcionarTransacoes(novaTransacao);
+      setTitle("");
+      setValor("");
+      setSelected(null);
+      setMsg("Transação salva com sucesso !");
+      setDisable(true);
+    } catch (e) {
+      console.error("Erro ao salvar transação:", e);
+    }
+  };
+
+  useEffect(() => {
+    const time = setTimeout(() => {
+      if (!msg) return null;
+      setMsg("");
+      open?.setIsModal(false)
+    }, 3000);
+
+    return () => clearTimeout(time);
+  }, [msg]);
 
   return (
     <View className="items-center justify-center mx-4">
@@ -113,8 +160,13 @@ export const Receita = () => {
           </Text>
         </View>
       </View>
+      {msg && <Text className="text-center mt-2 text-gray-200">{msg}</Text>}
 
-      <TouchableOpacity className="bg-gray-400 w-full items-center justify-center p-3 rounded sm:max-w-4xl mt-4">
+      <TouchableOpacity
+        className="bg-gray-400 w-full items-center justify-center p-3 rounded sm:max-w-4xl mt-4"
+        disabled={disable}
+        onPress={handleReceita}
+      >
         <Text className="text-gray-800 font-semibold">Enviar</Text>
       </TouchableOpacity>
     </View>

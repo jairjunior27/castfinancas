@@ -1,5 +1,5 @@
 import DateTimePicker from "@react-native-community/datetimepicker";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Button,
   Platform,
@@ -9,8 +9,8 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import DropDownPicker from "react-native-dropdown-picker";
-import { ConversorMoeda } from "../utils/conversorMoeda";
+import { TransacaoContext } from "../globalContext-Provider/context/transacaoContext";
+import { UserContext } from "../globalContext-Provider/context/userContext";
 import { DadosDespesas } from "../utils/dadosDespesas";
 import { formatarMoeda } from "../utils/formatarMoeda";
 import { SelectedIcon } from "./selectedIcon";
@@ -32,13 +32,14 @@ export const Despesa = () => {
   const [title, setTitle] = useState("");
   const [valor, setValor] = useState("");
   const [data, setData] = useState(new Date());
-  const [mostrar, setMostrar] = useState(false);
-
+  const [mostrar, setMostrar] = useState<boolean>(false);
+  const [disable, setDisable] = useState<boolean>(false);
+  const [msg, setMsg] = useState<string>("");
+  const tipo: "Entrada" | "Saida" = "Saida";
   const despesas = DadosDespesas;
 
- 
-
-
+  const transacao = useContext(TransacaoContext);
+  const open = useContext(UserContext);
   const handleDate = (_: any, selectedDate?: Date) => {
     setMostrar(Platform.OS === "ios");
     if (selectedDate) setData(selectedDate);
@@ -49,6 +50,46 @@ export const Despesa = () => {
     const novaData = new Date(Number(ano), Number(mes) - 1, Number(dia));
     setData(novaData);
   };
+
+  const handleDespesas = async () => {
+    if (!title || !valor || selected === null)
+      return setMsg("Favor preencher todos os campos !");
+
+    const novaTransacao = {
+      id: new Date().getTime(),
+      title,
+      valor: parseFloat(
+        valor
+          .replace(/\./g, "")
+          .replace(",", ".")
+          .replace(/[^\d.-]/g, "")
+      ),
+      data: data.toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" }),
+      icon: DadosDespesas.find((item) => item.id === selected)?.icon || "",
+      tipo,
+    };
+
+    try {
+      await transacao?.adcionarTransacoes(novaTransacao);
+      setTitle("");
+      setValor("");
+      setSelected(null);
+      setMsg("Transação salva com sucesso !");
+      setDisable(true);
+    } catch (e) {
+      console.error("Erro ao salvar transação:", e);
+    }
+  };
+
+  useEffect(() => {
+    if (!msg) return;
+    const time = setTimeout(() => {
+      setMsg("");
+      open?.setIsModal(false);
+    }, 3000);
+
+    return () => clearTimeout(time);
+  }, [msg]);
 
   return (
     <View className="items-center justify-center mx-4">
@@ -67,27 +108,22 @@ export const Despesa = () => {
       </ScrollView>
 
       <View className="w-full sm:max-w-4xl mt-8">
-      
-
         <TextInput
           placeholder="Digite o nome da Despesa"
           placeholderTextColor="#888"
           value={title}
           onChangeText={(e) => setTitle(e)}
           className=" bg-gray-100 p-3 rounded-md mb-8 outline-0 mt-3"
-      
         />
 
         <TextInput
           placeholder="Digite o valor R$"
           placeholderTextColor="#888"
           keyboardType="numeric"
-          onChangeText={e => setValor(formatarMoeda(e))}
+          onChangeText={(e) => setValor(formatarMoeda(e))}
           value={valor}
           className=" bg-gray-200 p-3 rounded-md mb-4 outline-0"
         />
-
-       
 
         <View>
           <Text className="mb-2 text-gray-500">Data da transação:</Text>
@@ -134,8 +170,13 @@ export const Despesa = () => {
           </Text>
         </View>
       </View>
+      {msg && <Text className="text-center mt-2 text-gray-200">{msg}</Text>}
 
-      <TouchableOpacity className="bg-gray-400 w-full items-center justify-center p-3 rounded sm:max-w-4xl mt-4">
+      <TouchableOpacity
+        className="bg-gray-400 w-full items-center justify-center p-3 rounded sm:max-w-4xl mt-4"
+        onPress={handleDespesas}
+        disabled={disable}
+      >
         <Text className="text-gray-800 font-semibold">Enviar</Text>
       </TouchableOpacity>
     </View>

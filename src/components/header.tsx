@@ -13,7 +13,7 @@ export const Header = () => {
   return (
     <View
       style={headerScreen ? { height: h } : {}}
-      className=" bg-slate-700  px-4  rounded-b-3xl flex items-center justify-center 
+      className=" bg-slate-900  px-4  rounded-b-6xl flex items-center justify-center 
          flex-col md:rounded  md:flex-row md:justify-between"
     >
       <Logo />
@@ -32,7 +32,7 @@ export const Header = () => {
         {typeof user?.user?.imagem === "string" && (
           <View
             style={{ width: 60, height: 60 }}
-            className="rounded-full border-2 border-yellow-300 overflow-hidden "
+            className="rounded-full border-2 border-yellow-100 overflow-hidden "
           >
             <Image
               source={{ uri: user.user.imagem }}

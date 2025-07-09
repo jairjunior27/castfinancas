@@ -12,8 +12,8 @@ export const ButtonInfo = () => {
   const [categoria, setCategoria] = useState("");
 
   return (
-    <View>
-      <View className="flex-row items-center justify-center mt-6">
+    <View className="mx-4">
+      <View className="flex-row items-center justify-center mt-6 ">
         {data.map((item) => (
           <ButtonItem
             label={item.label}

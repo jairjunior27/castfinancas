@@ -1,25 +1,105 @@
-import { Text, View } from "react-native";
+import { useContext, useEffect, useState } from "react";
+import { Text, TouchableOpacity, View } from "react-native";
+import { TransacaoContext } from "../globalContext-Provider/context/transacaoContext";
+import { DadosMensal } from "../utils/dadosMensal";
+import { formatarDataParaArray } from "../utils/formatData";
+import { FormatDinheiroBr } from "../utils/formatValor";
 
 export const Balanco = () => {
+  const [entrada, setEntrada] = useState(0);
+  const [saida, setSaida] = useState(0);
+  const [total, setTotal] = useState(0);
+
+  const transacoes = useContext(TransacaoContext);
+  const mesAtual = transacoes?.mesAtual ?? new Date().getMonth();
+  const setMesAtual = transacoes?.setMesAtual;
+  const anoAtual = transacoes?.anoAtual;
+
+  const loadBalanco = async () => {
+    const transacoesFiltradas =
+      transacoes?.transacao.filter((t) => {
+        const [,mes,] = formatarDataParaArray(t.data);
+        return mes === transacoes.mesAtual  && transacoes.anoAtual === anoAtual;
+      }) ?? [];
+
+    const totalEntrada = transacoesFiltradas
+      .filter((t) => t.tipo === "Entrada")
+      .reduce((acc, item) => acc + item.valor, 0);
+    const totalSaida = transacoesFiltradas
+      .filter((t) => t.tipo === "Saida")
+      .reduce((acc, item) => acc + item.valor, 0);
+
+    setEntrada(totalEntrada);
+    setSaida(totalSaida);
+    setTotal(totalEntrada - totalSaida);
+  };
+
+  useEffect(() => {
+    loadBalanco();
+  }, [transacoes]);
+
+  const handleMinus = () => {
+    if (mesAtual > 0 && setMesAtual) {
+      setMesAtual(mesAtual - 1);
+    }
+  };
+
+  const handlePlus = () => {
+    if (mesAtual < 11 && setMesAtual) {
+      setMesAtual(mesAtual + 1);
+    }
+  };
+
   return (
-    <View className="bg-gray-200 rounded-2xl -mt-10  sm:mt-6 p-4 mb-4 " style={{shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    elevation: 5,}}>
+    <View
+      className="w-full max-w-6xl mx-auto bg-gray-200 rounded-2xl -mt-10  sm:mt-6 p-4 mb-4   "
+      style={{
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.2,
+        shadowRadius: 6,
+        elevation: 5,
+      }}
+    >
       <View className="flex-row mb-2 ">
         <View className="flex-1 ">
           <Text className="mb-1 font-bold text-md md:text-lg">Entradas</Text>
-          <Text className="mb-1 font-normal text-md md:text-lg">R$ 1000</Text>
+          <Text className="mb-1 font-normal text-md md:text-lg text-green-700">
+            {FormatDinheiroBr(entrada)}
+          </Text>
         </View>
         <View className="flex-1 ">
           <Text className="mb-1 font-bold text-md md:text-lg">Saidas</Text>
-          <Text className="mb-1 font-normal text-md md:text-lg">..</Text>
+          <Text className="mb-1 font-normal text-md md:text-lg text-red-700">
+            {FormatDinheiroBr(saida)}
+          </Text>
         </View>
       </View>
-      <View className="">
-        <Text className="mb-1 font-bold text-md md:text-lg">Total</Text>
-        <Text className="mb-1 font-normal text-md md:text-lg">..</Text>
+      <View className="flex-row items-center">
+        <View className="flex-1">
+          <Text className="mb-1 font-bold text-md md:text-lg">Total</Text>
+          <Text className="mb-1 font-normal text-md md:text-lg">
+            {FormatDinheiroBr(total)}
+          </Text>
+        </View>
+        <View className="flex-1">
+          <View className="flex-row items-center">
+            <TouchableOpacity
+              className="mr-2 rounded-xl bg-gray-400"
+              onPress={handleMinus}
+            >
+              <Text className="px-4  text-xl">-</Text>
+            </TouchableOpacity>
+            <Text>{DadosMensal[mesAtual]}</Text>
+            <TouchableOpacity
+              className="ml-2 bg-gray-400 rounded-xl"
+              onPress={handlePlus}
+            >
+              <Text className="px-4  text-xl">+</Text>
+            </TouchableOpacity>
+            <Text className="mx-2">{anoAtual}</Text>
+          </View>
+        </View>
       </View>
     </View>
   );

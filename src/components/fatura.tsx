@@ -1,27 +1,27 @@
 import DateTimePicker from "@react-native-community/datetimepicker";
-import React, {  useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Button,
   Platform,
-
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
 
+import { UserContext } from "../globalContext-Provider/context/userContext";
+import { useDataBaseFatura } from "../libs/bancoFatura";
 import { formatarMoeda } from "../utils/formatarMoeda";
 
 export const Fatura = () => {
-  const [title, setTitle] = useState("");
+  const [titulo, setTitulo] = useState("");
   const [valor, setValor] = useState("");
+  const [msg, setMsg] = useState("");
   const [data, setData] = useState(new Date());
   const [mostrar, setMostrar] = useState(false);
-
-
-
- 
-
+  const [disable, setDisable] = useState(false);
+  const open = useContext(UserContext);
+  const { adcionarFatura } = useDataBaseFatura();
 
   const handleDate = (_: any, selectedDate?: Date) => {
     setMostrar(Platform.OS === "ios");
@@ -34,32 +34,55 @@ export const Fatura = () => {
     setData(novaData);
   };
 
+  const handleFatura = async () => {
+    if (!titulo || !valor) {
+      return setMsg("Favor preencher todos os campos !");
+    }
+
+    const novaFatura = {
+      id: Date.now(),
+      titulo,
+      valor: formatarMoeda(valor),
+      data: data.getTime(),
+    };
+
+    try {
+      await adcionarFatura(novaFatura);
+      setDisable(true);
+    } catch (e) {
+      console.error("Erro ao salvar fatura:", e);
+    }
+  };
+
+  useEffect(() => {
+    const time = setTimeout(() => {
+      if (!msg) return null;
+      setMsg("");
+      open?.setIsModal(false);
+    }, 3000);
+
+    return () => clearTimeout(time);
+  });
+
   return (
     <View className="items-center justify-center mx-4">
-  
-
       <View className="w-full sm:max-w-4xl mt-8">
-      
-
         <TextInput
           placeholder="Digite o nome da Fatura"
           placeholderTextColor="#888"
-          value={title}
-          onChangeText={(e) => setTitle(e)}
+          value={titulo}
+          onChangeText={(e) => setTitulo(e)}
           className=" bg-gray-100 p-3 rounded-md mb-8 outline-0 mt-3"
-      
         />
 
         <TextInput
           placeholder="Digite o valor R$"
           placeholderTextColor="#888"
           keyboardType="numeric"
-          onChangeText={e => setValor(formatarMoeda(e))}
+          onChangeText={(e) => setValor(formatarMoeda(e))}
           value={valor}
           className=" bg-gray-200 p-3 rounded-md mb-4 outline-0"
         />
-
-       
 
         <View>
           <Text className="mb-2 text-gray-500">Data da transação:</Text>
@@ -106,8 +129,13 @@ export const Fatura = () => {
           </Text>
         </View>
       </View>
+      {msg && <Text className="text-center mt-2 text-gray-200">{msg}</Text>}
 
-      <TouchableOpacity className="bg-gray-400 w-full items-center justify-center p-3 rounded sm:max-w-4xl mt-4">
+      <TouchableOpacity
+        className="bg-gray-400 w-full items-center justify-center p-3 rounded sm:max-w-4xl mt-4"
+        disabled={disable}
+        onPress={handleFatura}
+      >
         <Text className="text-gray-800 font-semibold">Enviar</Text>
       </TouchableOpacity>
     </View>
