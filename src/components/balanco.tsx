@@ -1,3 +1,4 @@
+import { Feather } from "@expo/vector-icons";
 import { useContext, useEffect, useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { TransacaoContext } from "../globalContext-Provider/context/transacaoContext";
@@ -18,8 +19,8 @@ export const Balanco = () => {
   const loadBalanco = async () => {
     const transacoesFiltradas =
       transacoes?.transacao.filter((t) => {
-        const [,mes,] = formatarDataParaArray(t.data);
-        return mes === transacoes.mesAtual  && transacoes.anoAtual === anoAtual;
+        const [, mes] = formatarDataParaArray(t.data);
+        return mes === transacoes.mesAtual && transacoes.anoAtual === anoAtual;
       }) ?? [];
 
     const totalEntrada = transacoesFiltradas
@@ -52,7 +53,7 @@ export const Balanco = () => {
 
   return (
     <View
-      className="w-full max-w-6xl mx-auto bg-gray-200 rounded-2xl -mt-10  sm:mt-6 p-4 mb-4   "
+      className="w-full max-w-6xl  bg-gray-200 rounded-2xl    p-4  mb-5 -mt-12 "
       style={{
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 4 },
@@ -78,26 +79,30 @@ export const Balanco = () => {
       <View className="flex-row items-center">
         <View className="flex-1">
           <Text className="mb-1 font-bold text-md md:text-lg">Total</Text>
-          <Text className="mb-1 font-normal text-md md:text-lg">
+          <Text
+            className="mb-1 font-normal text-md md:text-lg"
+            style={total > 0 ? { color: "#15803d" } : { color: "#b91c1c" }}
+          >
             {FormatDinheiroBr(total)}
           </Text>
         </View>
         <View className="flex-1">
           <View className="flex-row items-center">
             <TouchableOpacity
-              className="mr-2 rounded-xl bg-gray-400"
+              className="mr-2 rounded-xl bg-slate-800"
               onPress={handleMinus}
             >
-              <Text className="px-4  text-xl">-</Text>
+              <Feather name="chevron-left" size={24} color="#fff" />
             </TouchableOpacity>
-            <Text>{DadosMensal[mesAtual]}</Text>
+            <Text>
+              {DadosMensal[mesAtual]}/{anoAtual}
+            </Text>
             <TouchableOpacity
-              className="ml-2 bg-gray-400 rounded-xl"
+              className="ml-2 bg-slate-800 rounded-xl"
               onPress={handlePlus}
             >
-              <Text className="px-4  text-xl">+</Text>
+              <Feather name="chevron-right" size={24} color="#fff" />
             </TouchableOpacity>
-            <Text className="mx-2">{anoAtual}</Text>
           </View>
         </View>
       </View>

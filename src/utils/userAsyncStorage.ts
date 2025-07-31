@@ -28,3 +28,11 @@ export const atualizarImagem = async (novaImagem: string) => {
   }
   return null;
 };
+
+export const AtualizarUsuario = async (user: UserType) => {
+  try {
+    await AsyncStorage.setItem("cadastro", JSON.stringify(user));
+  } catch (error) {
+    console.error("Erro ao atualizar o usuário:", error);
+  }
+};

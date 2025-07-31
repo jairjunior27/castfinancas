@@ -12,16 +12,26 @@ import {
 import { UserContext } from "../globalContext-Provider/context/userContext";
 import { useDataBaseFatura } from "../libs/bancoFatura";
 import { formatarMoeda } from "../utils/formatarMoeda";
+import { verificaNotificacao } from "../utils/notificacao";
 
-export const Fatura = () => {
+export const FaturaForm = () => {
   const [titulo, setTitulo] = useState("");
   const [valor, setValor] = useState("");
   const [msg, setMsg] = useState("");
   const [data, setData] = useState(new Date());
+  const [isDataHoje, setIsDataHoje] = useState(false);
   const [mostrar, setMostrar] = useState(false);
   const [disable, setDisable] = useState(false);
   const open = useContext(UserContext);
   const { adcionarFatura } = useDataBaseFatura();
+
+  const isToday = (date: Date) => {
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0);
+    const d = new Date(date);
+    d.setHours(0, 0, 0, 0);
+    return hoje.getTime() === d.getTime();
+  };
 
   const handleDate = (_: any, selectedDate?: Date) => {
     setMostrar(Platform.OS === "ios");
@@ -39,6 +49,12 @@ export const Fatura = () => {
       return setMsg("Favor preencher todos os campos !");
     }
 
+    if (isDataHoje) {
+      return setMsg(
+        "Esta fatura vence hoje! Não será  adicionada as notificações "
+      );
+    }
+
     const novaFatura = {
       id: Date.now(),
       titulo,
@@ -48,6 +64,8 @@ export const Fatura = () => {
 
     try {
       await adcionarFatura(novaFatura);
+      await verificaNotificacao(novaFatura);
+      setMsg("Fatura adicionada com sucesso");
       setDisable(true);
     } catch (e) {
       console.error("Erro ao salvar fatura:", e);
@@ -59,11 +77,14 @@ export const Fatura = () => {
       if (!msg) return null;
       setMsg("");
       open?.setIsModal(false);
-    }, 3000);
+    }, 5000);
 
     return () => clearTimeout(time);
   });
 
+  useEffect(() => {
+    setIsDataHoje(isToday(data));
+  }, [data]);
   return (
     <View className="items-center justify-center mx-4">
       <View className="w-full sm:max-w-4xl mt-8">

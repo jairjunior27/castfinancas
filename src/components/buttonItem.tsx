@@ -10,7 +10,7 @@ export const ButtonItem = ({ label, clickButton, isSelected }: prop) => {
   return (
     <TouchableOpacity
       onPress={clickButton}
-      className="mx-3 p-2 rounded-2xl w-[90px] md:w-[300px] "
+      className="mx-3 p-2 rounded-2xl w-[90px] md:w-[220px] "
       style={
         isSelected
           ? { backgroundColor: "#eab308" }

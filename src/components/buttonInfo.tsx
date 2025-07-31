@@ -3,7 +3,7 @@ import { View } from "react-native";
 import { TiposTransacoes } from "../utils/tiposTransacoes";
 import { ButtonItem } from "./buttonItem";
 import { Despesa } from "./despesa";
-import { Fatura } from "./fatura";
+import { FaturaForm } from "./faturaForm";
 import { Receita } from "./receita";
 
 export const ButtonInfo = () => {
@@ -28,7 +28,7 @@ export const ButtonInfo = () => {
 
       {categoria === "Despesa" && <Despesa />}
       {categoria === "Receita" && <Receita />}
-      {categoria === "Fatura" && <Fatura />}
+      {categoria === "Fatura" && <FaturaForm />}
     </View>
   );
 };

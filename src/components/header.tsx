@@ -4,31 +4,27 @@ import { UserContext } from "../globalContext-Provider/context/userContext";
 import { Logo } from "./logo";
 
 const { height, width } = Dimensions.get("window");
-const headerScreen = width <= 768;
-const h = height * 0.3;
+const headerScreen = width <= 764;
+const h = headerScreen ? height * 0.3 : height * 0.15;
 
 export const Header = () => {
   const user = useContext(UserContext);
 
   return (
     <View
-      style={headerScreen ? { height: h } : {}}
-      className=" bg-slate-900  px-4  rounded-b-6xl flex items-center justify-center 
-         flex-col md:rounded  md:flex-row md:justify-between"
+      className="bg-slate-900  p-12 rounded-b-2xl "
+      style={{ height: h } }
     >
       <Logo />
-      <View className="flex-row justify-between  my-5">
-        <View className="flex-row items-center  ">
-          <Text className="text-gray-200">Bem vindo (a)</Text>
-          <Text
-            numberOfLines={1}
-            ellipsizeMode="tail"
-            className="mx-2 text-yellow-200 font-light w-[100px] "
-          >
-            {user?.user?.nome}
-          </Text>
-        </View>
-
+      <View className="flex-row items-center my-2">
+        <Text className="text-gray-200">Bem vindo (a)</Text>
+        <Text
+          className="text-gray-200 mx-2 font-extralight w-[100px] flex-1"
+          numberOfLines={1}
+          ellipsizeMode="tail"
+        >
+          {user?.user?.nome}
+        </Text>
         {typeof user?.user?.imagem === "string" && (
           <View
             style={{ width: 60, height: 60 }}

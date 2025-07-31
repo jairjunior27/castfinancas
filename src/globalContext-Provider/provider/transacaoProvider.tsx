@@ -7,7 +7,7 @@ export const TransacaoProvider = ({ children }: { children: ReactNode }) => {
   const [transacao, setTransacao] = useState<transacoesType[]>([]);
   const [mesAtual, setMesAtual] = useState(new Date().getMonth());
   const [anoAtual, setAnoAtual] = useState(new Date().getFullYear());
-  const { create, getAll } = useDataBaseTransacoes();
+  const { create, getAll, remove, update } = useDataBaseTransacoes();
 
   const loadTransacoes = async () => {
     const data = await getAll();
@@ -26,6 +26,15 @@ export const TransacaoProvider = ({ children }: { children: ReactNode }) => {
     await loadTransacoes();
   };
 
+  const excluirTransacoes = async (id: number) => {
+    await remove(id);
+    await loadTransacoes();
+  };
+  const editarTransacoes = async (novatransacao: transacoesType) => {
+    await update(novatransacao);
+    await loadTransacoes();
+  };
+
   return (
     <TransacaoContext.Provider
       value={{
@@ -36,6 +45,8 @@ export const TransacaoProvider = ({ children }: { children: ReactNode }) => {
         setMesAtual,
         anoAtual,
         setAnoAtual,
+        editarTransacoes,
+        excluirTransacoes,
       }}
     >
       {children}
